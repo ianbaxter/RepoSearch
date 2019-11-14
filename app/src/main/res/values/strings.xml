@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RepoSearch</string>
+    <string name="search_button">Search</string>
+    <string name="enter_search_hint">Enter Search</string>
+</resources>
