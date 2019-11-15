@@ -8,11 +8,10 @@ public class RetrofitInstance {
     private static final String BASE_URL = "https://api.github.com/";
 
     public Retrofit getRetrofitInstance() {
-        Retrofit retrofit = new Retrofit.Builder()
+
+        return new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
-
-        return retrofit;
     }
 }

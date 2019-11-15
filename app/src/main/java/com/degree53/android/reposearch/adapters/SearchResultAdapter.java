@@ -15,28 +15,27 @@ import com.degree53.android.reposearch.network.Repo;
 import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultHolder> {
-    private Context mContext;
     private List<Repo.Item> mData;
     private SearchResultClickListener searchResultClickListener;
 
     public SearchResultAdapter(Context context, List<Repo.Item> data) {
-        mContext = context;
         mData = data;
-        searchResultClickListener = (SearchResultClickListener) mContext;
+        searchResultClickListener = (SearchResultClickListener) context;
     }
 
+    // Click listener interface
     public interface SearchResultClickListener {
         void onResultItemClick(int adapterPosition);
     }
 
+    // ViewHolder with click listener
     public class SearchResultHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-
         private TextView textView;
+
         private SearchResultHolder(TextView view) {
             super(view);
             textView = view;
-
             textView.setOnClickListener(this);
         }
 
@@ -56,8 +55,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SearchResultHolder holder, int position) {
-        Repo.Item repoItem = mData.get(position);
-        holder.textView.setText(repoItem.getName());
+        if (mData != null) {
+            // Get the name of each repository item
+            Repo.Item repoItem = mData.get(position);
+            holder.textView.setText(repoItem.getName());
+        }
     }
 
     @Override

@@ -29,16 +29,19 @@ import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity
         implements SearchResultAdapter.SearchResultClickListener {
-    private static final String REPO_NAME = "name";
-    private static final String REPO_DESCRIPTION = "description";
-    private static final String REPO_FORKS = "forks";
-    private static final String REPO_OPEN_ISSUES = "open_issues";
-    private static final String REPO_WATCHERS = "watchers";
-    private static final String REPO_HTML_URL = "html_url";
+
+    private static final String REPO_NAME = "repo_name";
+    private static final String REPO_DESCRIPTION = "repo_description";
+    private static final String REPO_FORKS = "repo_forks";
+    private static final String REPO_OPEN_ISSUES = "repo_open_issues";
+    private static final String REPO_WATCHERS = "repo_watchers";
+    private static final String REPO_HTML_URL = "repo_html_url";
 
     private List<Repo.Item> data;
     private SearchResultAdapter viewAdapter;
     private ProgressBar progressBar;
+
+    String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +64,15 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(viewAdapter);
     }
 
-    public void search(View view) {
-        progressBar.setVisibility(View.VISIBLE);
-
+    public void searchButton(View view) {
+        // Use entered query to get a list of repositories from github
         EditText editText = findViewById(R.id.et_search_main);
         String query = editText.getText().toString();
-        getData(query);
-        collapseKeyboard();
+        if (!query.equals("")) {
+            progressBar.setVisibility(View.VISIBLE);
+            getData(query);
+            collapseKeyboard();
+        }
     }
 
     private void getData(String query) {
@@ -79,7 +84,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<Repo> call, Response<Repo> response) {
                 progressBar.setVisibility(View.GONE);
-
                 if (response.body() != null) {
                     data = response.body().getItems();
                     viewAdapter.setData(data);
@@ -88,9 +92,10 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Repo> call, Throwable t) {
-                Log.e("TAG", "Failed to get data: " + t.toString());
+                Log.e(TAG, "Failed to get data: " + t.toString());
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(MainActivity.this, "Something went wrong, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,
+                        "Something went wrong, try again later", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -98,15 +103,16 @@ public class MainActivity extends AppCompatActivity
     private void collapseKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
     @Override
     public void onResultItemClick(int adapterPosition) {
+        // Get data from selected repository
         Repo.Item repoItem = data.get(adapterPosition);
-
         String name = repoItem.getName();
         String description = repoItem.getDescription();
         String forks = String.valueOf(repoItem.getForks());
@@ -114,7 +120,8 @@ public class MainActivity extends AppCompatActivity
         String watchers = String.valueOf(repoItem.getWatchers());
         String htmlUrl = repoItem.getHtml_url();
 
-        Intent intent = new Intent(this, DetailActivity.class);
+        // Send data to detail activity
+        Intent detailIntent = new Intent(this, DetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(REPO_NAME, name);
         bundle.putString(REPO_DESCRIPTION, description);
@@ -122,7 +129,8 @@ public class MainActivity extends AppCompatActivity
         bundle.putString(REPO_OPEN_ISSUES, openIssues);
         bundle.putString(REPO_WATCHERS, watchers);
         bundle.putString(REPO_HTML_URL, htmlUrl);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        detailIntent.putExtras(bundle);
+
+        startActivity(detailIntent);
     }
 }
