@@ -20,12 +20,11 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
         setupViews();
     }
 
     private void setupViews() {
-        // Get passed repository details and set each text view accordingly
+        // Get bundled repository details and set each text field accordingly
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {

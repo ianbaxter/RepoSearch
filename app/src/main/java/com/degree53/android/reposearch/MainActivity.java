@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -37,22 +36,21 @@ public class MainActivity extends AppCompatActivity
     private static final String REPO_WATCHERS = "repo_watchers";
     private static final String REPO_HTML_URL = "repo_html_url";
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private List<Repo.Item> data;
     private SearchResultAdapter viewAdapter;
     private ProgressBar progressBar;
-
-    String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        progressBar = findViewById(R.id.indeterminate_progress_bar);
-
-        setupViewModel();
+        setupViews();
     }
 
-    private void setupViewModel() {
+    private void setupViews() {
+        progressBar = findViewById(R.id.indeterminate_progress_bar);
         viewAdapter = new SearchResultAdapter(this, data);
         RecyclerView.LayoutManager viewManager = new LinearLayoutManager(this);
         RecyclerView recyclerView = findViewById(R.id.recycler_view_main);
