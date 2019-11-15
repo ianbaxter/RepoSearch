@@ -10,23 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.degree53.android.reposearch.R;
-import com.degree53.android.reposearch.internet.Repo;
+import com.degree53.android.reposearch.network.Repo;
 
 import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultHolder> {
     private Context mContext;
-    private List<Repo> mData;
+    private List<Repo.Item> mData;
     private SearchResultClickListener searchResultClickListener;
 
-    public SearchResultAdapter(Context context, List<Repo> data) {
+    public SearchResultAdapter(Context context, List<Repo.Item> data) {
         mContext = context;
         mData = data;
         searchResultClickListener = (SearchResultClickListener) mContext;
     }
 
     public interface SearchResultClickListener {
-        void onSearchResultClick(int adapterPosition);
+        void onResultItemClick(int adapterPosition);
     }
 
     public class SearchResultHolder extends RecyclerView.ViewHolder
@@ -42,7 +42,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         @Override
         public void onClick(View v) {
-            searchResultClickListener.onSearchResultClick(getAdapterPosition());
+            searchResultClickListener.onResultItemClick(getAdapterPosition());
         }
     }
 
@@ -56,7 +56,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SearchResultHolder holder, int position) {
-        holder.textView.setText(String.valueOf(mData.get(position)));
+        Repo.Item repoItem = mData.get(position);
+        holder.textView.setText(repoItem.getName());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return 0;
     }
 
-    public void setData(List<Repo> data) {
+    public void setData(List<Repo.Item> data) {
         mData = data;
         notifyDataSetChanged();
     }

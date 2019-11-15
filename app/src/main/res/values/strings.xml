@@ -2,4 +2,9 @@
     <string name="app_name">RepoSearch</string>
     <string name="search_button">Search</string>
     <string name="enter_search_hint">Enter Search</string>
+    <string name="label_open_issues">Open Issues</string>
+    <string name="label_forks">Forks</string>
+    <string name="label_watchers">Watchers</string>
+    <string name="label_description">Description</string>
+    <string name="label_html_url">Link</string>
 </resources>
