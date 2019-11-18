@@ -10,15 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.degree53.android.reposearch.R;
+import com.degree53.android.reposearch.network.Item;
 import com.degree53.android.reposearch.network.Repo;
 
 import java.util.List;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.SearchResultHolder> {
-    private List<Repo.Item> mData;
+    private List<Item> mData;
     private SearchResultClickListener searchResultClickListener;
 
-    public SearchResultAdapter(Context context, List<Repo.Item> data) {
+    public SearchResultAdapter(Context context, List<Item> data) {
         mData = data;
         searchResultClickListener = (SearchResultClickListener) context;
     }
@@ -57,7 +58,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public void onBindViewHolder(@NonNull SearchResultHolder holder, int position) {
         if (mData != null) {
             // Get the name of each repository item
-            Repo.Item repoItem = mData.get(position);
+            Item repoItem = mData.get(position);
             holder.textView.setText(repoItem.getName());
         }
     }
@@ -70,7 +71,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return 0;
     }
 
-    public void setData(List<Repo.Item> data) {
+    public void setData(List<Item> data) {
         mData = data;
         notifyDataSetChanged();
     }

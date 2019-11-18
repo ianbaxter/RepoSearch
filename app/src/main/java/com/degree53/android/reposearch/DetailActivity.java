@@ -9,12 +9,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DetailActivity extends AppCompatActivity {
-    private static final String REPO_NAME = "repo_name";
-    private static final String REPO_DESCRIPTION = "repo_description";
-    private static final String REPO_FORKS = "repo_forks";
-    private static final String REPO_OPEN_ISSUES = "repo_open_issues";
-    private static final String REPO_WATCHERS = "repo_watchers";
-    private static final String REPO_HTML_URL = "repo_html_url";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,12 +22,12 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
-            String name = bundle.getString(REPO_NAME);
-            String description = bundle.getString(REPO_DESCRIPTION);
-            String forks = bundle.getString(REPO_FORKS);
-            String openIssues = bundle.getString(REPO_OPEN_ISSUES);
-            String watchers = bundle.getString(REPO_WATCHERS);
-            String htmlUrl = bundle.getString(REPO_HTML_URL);
+            String name = bundle.getString(MainActivity.REPO_NAME);
+            String description = bundle.getString(MainActivity.REPO_DESCRIPTION);
+            String forks = bundle.getString(MainActivity.REPO_FORKS);
+            String openIssues = bundle.getString(MainActivity.REPO_OPEN_ISSUES);
+            String watchers = bundle.getString(MainActivity.REPO_WATCHERS);
+            String htmlUrl = bundle.getString(MainActivity.REPO_HTML_URL);
 
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {

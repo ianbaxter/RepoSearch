@@ -1,6 +1,8 @@
 package com.degree53.android.reposearch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +19,11 @@ import android.widget.Toast;
 
 import com.degree53.android.reposearch.adapters.SearchResultAdapter;
 import com.degree53.android.reposearch.network.GitHubService;
+import com.degree53.android.reposearch.network.Item;
 import com.degree53.android.reposearch.network.Repo;
 import com.degree53.android.reposearch.network.RetrofitInstance;
+import com.degree53.android.reposearch.viewmodels.MainViewModel;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,27 +34,44 @@ import retrofit2.Retrofit;
 public class MainActivity extends AppCompatActivity
         implements SearchResultAdapter.SearchResultClickListener {
 
-    private static final String REPO_NAME = "repo_name";
-    private static final String REPO_DESCRIPTION = "repo_description";
-    private static final String REPO_FORKS = "repo_forks";
-    private static final String REPO_OPEN_ISSUES = "repo_open_issues";
-    private static final String REPO_WATCHERS = "repo_watchers";
-    private static final String REPO_HTML_URL = "repo_html_url";
+    protected static final String REPO_NAME = "repo_name";
+    protected static final String REPO_DESCRIPTION = "repo_description";
+    protected static final String REPO_FORKS = "repo_forks";
+    protected static final String REPO_OPEN_ISSUES = "repo_open_issues";
+    protected static final String REPO_WATCHERS = "repo_watchers";
+    protected static final String REPO_HTML_URL = "repo_html_url";
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private List<Repo.Item> data;
+    private MainViewModel viewModel;
+    private List<Item> data;
     private SearchResultAdapter viewAdapter;
     private ProgressBar progressBar;
+    private EditText editText;
+    private GitHubService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupViewModel();
         setupViews();
+        setupRetroFit();
+    }
+
+    private void setupViewModel() {
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getLiveData().observe(this, new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                data = items;
+                viewAdapter.setData(data);
+            }
+        });
     }
 
     private void setupViews() {
+        editText = findViewById(R.id.et_search_main);
         progressBar = findViewById(R.id.indeterminate_progress_bar);
         viewAdapter = new SearchResultAdapter(this, data);
         RecyclerView.LayoutManager viewManager = new LinearLayoutManager(this);
@@ -62,9 +84,13 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setAdapter(viewAdapter);
     }
 
+    private void setupRetroFit() {
+        Retrofit retrofit = new RetrofitInstance().getRetrofitInstance();
+        service = retrofit.create(GitHubService.class);
+    }
+
     public void searchButton(View view) {
         // Use entered query to get a list of repositories from github
-        EditText editText = findViewById(R.id.et_search_main);
         String query = editText.getText().toString();
         if (!query.equals("")) {
             progressBar.setVisibility(View.VISIBLE);
@@ -74,8 +100,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getData(String query) {
-        Retrofit retrofit = new RetrofitInstance().getRetrofitInstance();
-        GitHubService service = retrofit.create(GitHubService.class);
         Call<Repo> searchResults = service.listRepos(query);
 
         searchResults.enqueue(new Callback<Repo>() {
@@ -83,8 +107,7 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<Repo> call, Response<Repo> response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.body() != null) {
-                    data = response.body().getItems();
-                    viewAdapter.setData(data);
+                    viewModel.setLiveData(response.body().getItems());
                 }
             }
 
@@ -110,7 +133,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResultItemClick(int adapterPosition) {
         // Get data from selected repository
-        Repo.Item repoItem = data.get(adapterPosition);
+        Item repoItem = data.get(adapterPosition);
         String name = repoItem.getName();
         String description = repoItem.getDescription();
         String forks = String.valueOf(repoItem.getForks());
